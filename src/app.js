@@ -11,4 +11,11 @@ app.use(cors({
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static('public'));
+
+//routes
+import userRoutes from './routes/user.route.js';
+
+//routes declaration
+app.use('/api/users', userRoutes);
 export default app; 
+
