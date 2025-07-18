@@ -4,7 +4,7 @@ import connectDB from "./db/db.js";
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
-
+import app from "./app.js";
 connectDB()
   .then(() => {
     app.listen(process.env.PORT || 3000, () => {
