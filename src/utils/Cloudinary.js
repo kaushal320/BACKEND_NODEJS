@@ -1,5 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Configuration
 cloudinary.config({
@@ -11,17 +13,30 @@ cloudinary.config({
 const uploadOnCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) {
-      throw new Error("Local file path is required for upload.");
+      return null;
     }
-    //upload the file on cloudinary
+
     const result = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto", // Automatically detect the resource type
+      resource_type: "auto",
     });
-    console.log("File uploaded successfully:", result);
+
+    console.log("✅ File uploaded successfully to Cloudinary:", result);
+
+    // Delete file only after successful upload
+    if (fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
+
     return result;
   } catch (error) {
-    fs.unlinkSync(localFilePath);
-    console.error("Error uploading file:", error);
+    console.error("❌ Error uploading file:", error);
+
+    // Attempt to clean up if file path exists
+    if (localFilePath && fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
+
+    throw error; // rethrow so controller can handle it
   }
 };
 
